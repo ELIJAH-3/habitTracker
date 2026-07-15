@@ -500,6 +500,65 @@ function renderTracker() {
     sub.setAttribute('dominant-baseline', 'middle');
     sub.textContent = 'Jul - Dec';
     svg.appendChild(sub);
+
+    renderNotesSidebar();
+}
+
+function renderNotesSidebar() {
+    const list = document.getElementById('notesList');
+    if (!list) return;
+    list.innerHTML = '';
+
+    if (!state.notes || Object.keys(state.notes).length === 0) {
+        list.innerHTML = '<div style="opacity:0.5; text-align:center; margin-top:20px;">No notes yet.</div>';
+        return;
+    }
+
+    // Sort dates descending (newest first)
+    const dates = Object.keys(state.notes).sort((a, b) => b.localeCompare(a));
+
+    for (const dateStr of dates) {
+        const noteText = state.notes[dateStr];
+        if (!noteText || noteText.trim() === '') continue;
+
+        const rating = state.ratings[dateStr];
+        const color = rating ? ratingColor(rating) : 'var(--cell-empty)';
+        const textColor = (rating && rating >= 3 && rating <= 8) ? '#111' : (rating ? '#fff' : 'var(--text)');
+
+        const card = document.createElement('div');
+        card.className = 'note-card';
+        card.style.background = color;
+        card.style.color = textColor;
+
+        const header = document.createElement('div');
+        header.className = 'note-card-header';
+        
+        const d = new Date(dateStr + "T12:00:00");
+        const options = { month: 'short', day: 'numeric', year: 'numeric' };
+        const dateSpan = document.createElement('span');
+        dateSpan.textContent = d.toLocaleDateString(undefined, options);
+        
+        const ratingSpan = document.createElement('span');
+        ratingSpan.textContent = rating ? `${rating}/10` : '-/10';
+
+        header.appendChild(dateSpan);
+        header.appendChild(ratingSpan);
+
+        const body = document.createElement('div');
+        body.className = 'note-card-body';
+        body.textContent = noteText;
+
+        card.appendChild(header);
+        card.appendChild(body);
+        
+        // Click to edit
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', () => {
+            openEntryModal(dateStr, rating || '', noteText);
+        });
+
+        list.appendChild(card);
+    }
 }
 
 /* ====================================================================== */
@@ -602,6 +661,13 @@ function bindEvents() {
     document.getElementById('modalSaveBtn').addEventListener('click', saveEntry);
     document.getElementById('modalClearBtn').addEventListener('click', clearEntry);
     document.getElementById('modalCancelBtn').addEventListener('click', closeEntryModal);
+
+    document.getElementById('notesMenuBtn').addEventListener('click', () => {
+        document.getElementById('notesSidebar').classList.add('open');
+    });
+    document.getElementById('closeSidebarBtn').addEventListener('click', () => {
+        document.getElementById('notesSidebar').classList.remove('open');
+    });
 
     window.addEventListener('resize',           resizeTracker);
     window.addEventListener('load',             resizeTracker);
