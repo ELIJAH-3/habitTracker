@@ -1,0 +1,21 @@
+{
+  "name": "habittracker",
+  "version": "1.0.0",
+  "description": "A single-page, offline-friendly, printable daily-rating tracker. Each day is\r scored from **1** (10 % green - very pale) to **10** (100 % green - deep and\r vibrant). Only the tracker is on screen, plus a small semi-transparent row\r of controls in the bottom-right corner.",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ELIJAH-3/habitTracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ELIJAH-3/habitTracker/issues"
+  },
+  "homepage": "https://github.com/ELIJAH-3/habitTracker#readme"
+}

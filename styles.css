@@ -1,0 +1,201 @@
+/* ---------- Theme variables ---------- */
+:root {
+    --bg:              #f4ecd8;
+    --text:            #222;
+    --text-muted:      #666;
+    --cell-empty:      #ebe1c8;                  /* slightly darker than bg */
+    --cell-outline:    #8b7f5f;
+    --hover-shadow:    #111;
+    --control-text:    #444;
+    --control-hover:   rgba(0,0,0,0.08);
+    --status-ok:       #2b7a3d;
+    --status-err:      #c62828;
+    --danger-hover:    rgba(198,40,40,0.14);
+    --danger-hover-fg: #a01818;
+    --today:           #3a4759;                  /* muted royal graphite */
+}
+
+[data-theme="dark"] {
+    --bg:              #14171c;
+    --text:            #e6e2d5;
+    --text-muted:      #9aa0a8;
+    --cell-empty:      #262a31;
+    --cell-outline:    #4a5058;
+    --hover-shadow:    #f0f0f0;
+    --control-text:    #b9beca;
+    --control-hover:   rgba(255,255,255,0.10);
+    --status-ok:       #6bbf7e;
+    --status-err:      #ff6b6b;
+    --danger-hover:    rgba(255,107,107,0.16);
+    --danger-hover-fg: #ff8080;
+    --today:           #b6b8c0;                  /* soft platinum */
+}
+
+/* ---------- Base ---------- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; overflow: hidden; }
+
+/* JetBrains Mono is used everywhere. Fall back through common monospace
+ * fonts if the JetBrains font is not installed. */
+body,
+button,
+input,
+.day-label,
+.month-label,
+.center-text,
+.center-sub {
+    font-family: 'JetBrains Mono', 'JetBrainsMono NF', 'Cascadia Code',
+                 'Fira Code', 'Consolas', 'Courier New', monospace;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    transition: background 0.25s, color 0.25s;
+}
+
+/* ---------- Stage: only the tracker ----------
+ *  Symmetric top+bottom padding leaves clearance for BOTH the browser's
+ *  bookmark/address bar (or a Windows 11 top gadget bar) and the OS
+ *  taskbar at the bottom - so a full-screen screenshot used as a
+ *  wallpaper never clips day 1 (top) or day 21 (bottom).             */
+.stage {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 72px 20px 72px 20px;
+}
+#tracker {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    min-width: 260px;
+    min-height: 260px;
+}
+
+/* ---------- Floating controls (bottom-right, subtle) ---------- */
+.floating-controls {
+    position: fixed;
+    right: 16px;
+    bottom: 14px;
+    display: flex;
+    gap: 6px;
+    z-index: 5;
+    opacity: 0.55;
+    transition: opacity 0.18s;
+}
+.floating-controls:hover { opacity: 1; }
+.floating-controls button {
+    background: transparent;
+    border: none;
+    color: var(--control-text);
+    font-family: inherit;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: 3px;
+    text-transform: uppercase;
+    transition: background 0.15s, color 0.15s;
+}
+.floating-controls button:hover { background: var(--control-hover); color: var(--text); }
+.floating-controls button.danger:hover { background: var(--danger-hover); color: var(--danger-hover-fg); }
+
+.status {
+    position: fixed;
+    left: 16px;
+    bottom: 14px;
+    font-size: 0.8rem;
+    color: var(--status-ok);
+    font-weight: 600;
+    z-index: 5;
+    opacity: 0.9;
+}
+.status.error { color: var(--status-err); }
+
+/* Hidden-menu state (toggled with `H`/`M`) - clean screenshots. */
+body.menu-hidden .floating-controls,
+body.menu-hidden .status { display: none !important; }
+
+/* ---------- SVG cell shapes ---------- */
+.seg {
+    cursor: pointer;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    transition: filter 0.12s;
+}
+.seg.empty {
+    fill:   var(--cell-empty);
+    stroke: var(--cell-empty);
+    filter: drop-shadow(0 0 1.2px var(--cell-outline));
+}
+/* Rated cells set their own fill+stroke via inline `style` in JS so
+ * the rounded-corner stroke is guaranteed to match the fill colour.  */
+.seg.rated { filter: none; }
+.seg:hover { filter: brightness(0.9) drop-shadow(0 0 1.5px var(--hover-shadow)); }
+
+/* Today highlight: an outlined ring rendered UNDER today's cell, so only
+ * the outer band shows as a quiet border around today's cell. It is
+ * only drawn when the cell is still unrated (see script.js), and pulses
+ * slowly so the user's eye is gently drawn to it.                      */
+.today-marker {
+    fill: none;
+    stroke: var(--today);
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    pointer-events: none;
+    animation: today-pulse 2.6s ease-in-out infinite;
+}
+
+@keyframes today-pulse {
+    0%, 100% { opacity: 1;    }
+    50%      { opacity: 0.15; }
+}
+
+.day-label {
+    font-size: 22px;
+    fill: var(--text);
+    text-anchor: middle;
+    font-weight: 600;
+    pointer-events: none;
+}
+.month-label {
+    font-size: 20px;
+    fill: var(--text);
+    font-weight: 700;
+    letter-spacing: 3px;
+    pointer-events: none;
+}
+.center-text {
+    font-size: 40px;
+    font-weight: 700;
+    text-anchor: middle;
+    fill: var(--text);
+    pointer-events: auto;
+    cursor: pointer;
+}
+.center-sub {
+    font-size: 16px;
+    text-anchor: middle;
+    fill: var(--text-muted);
+    pointer-events: none;
+}
+
+/* ---------- Print ---------- */
+@media print {
+    html, body { overflow: visible; height: auto; background: #fff; color: #000; }
+    .no-print { display: none !important; }
+    .stage { position: static; padding: 10mm; }
+    .seg { cursor: default !important; }
+    .seg.empty { fill: #fff; stroke: #fff; }
+    .day-label, .month-label, .center-text { fill: #000; }
+    .center-sub { fill: #444; }
+    .today-marker { display: none; }
+}
+
+/* When exporting via html2canvas we don't want today's highlight in
+ * the output image - it's a live-view affordance only.               */
+body.exporting .today-marker { display: none; }

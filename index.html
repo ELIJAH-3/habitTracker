@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rate Your Day</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <main class="stage" id="printRoot">
+        <svg id="tracker"
+             viewBox="-520 -520 1040 1040"
+             preserveAspectRatio="xMidYMid meet"
+             xmlns="http://www.w3.org/2000/svg"></svg>
+    </main>
+
+    <div class="floating-controls no-print" id="controls">
+        <button id="themeBtn"    title="Toggle light / dark theme">theme</button>
+        <button id="syncBtn"     title="Force sync with Cloud">sync</button>
+        <button id="pdfBtn"      title="Export as PDF">pdf</button>
+        <button id="printBtn"    title="Print (or save as PDF)">print</button>
+        <button id="resetBtn"    title="Clear all ratings" class="danger">reset</button>
+    </div>
+    <div id="statusMsg" class="status no-print"></div>
+
+    <script src="vendor/html2canvas.min.js"></script>
+    <script src="vendor/jspdf.umd.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
