@@ -243,6 +243,70 @@ function promptRating(ringIdx, day) {
     openEntryModal(key, curRating, curNote);
 }
 
+function openEntryModal(dateStr, currentRating, currentNote) {
+    currentEditDate = dateStr;
+    const modal = document.getElementById('entryModal');
+    const dateTitle = document.getElementById('modalDate');
+    const ratingInput = document.getElementById('modalRating');
+    const noteInput = document.getElementById('modalNote');
+    
+    // Format date string for display (e.g. "2026-07-15" -> "July 15, 2026")
+    const d = new Date(dateStr + "T12:00:00");
+    const options = { month: 'long', day: 'numeric', year: 'numeric' };
+    dateTitle.textContent = d.toLocaleDateString(undefined, options);
+    
+    ratingInput.value = currentRating || '';
+    noteInput.value = currentNote || '';
+    
+    modal.classList.remove('hidden');
+    ratingInput.focus();
+}
+
+function closeEntryModal() {
+    document.getElementById('entryModal').classList.add('hidden');
+    currentEditDate = null;
+}
+
+function saveEntry() {
+    if (!currentEditDate) return;
+    const ratingStr = document.getElementById('modalRating').value.trim();
+    const noteStr = document.getElementById('modalNote').value.trim();
+    
+    // Rating handling
+    if (ratingStr !== '') {
+        const r = parseInt(ratingStr, 10);
+        if (Number.isInteger(r) && r >= 1 && r <= 10) {
+            state.ratings[currentEditDate] = r;
+        } else {
+            showStatus("Rating must be a whole number from 1 to 10.", true);
+            return; // don't close modal
+        }
+    } else {
+        delete state.ratings[currentEditDate];
+    }
+    
+    // Note handling
+    if (noteStr !== '') {
+        if (!state.notes) state.notes = {};
+        state.notes[currentEditDate] = noteStr;
+    } else {
+        if (state.notes) delete state.notes[currentEditDate];
+    }
+    
+    saveLocal();
+    renderTracker();
+    closeEntryModal();
+}
+
+function clearEntry() {
+    if (!currentEditDate) return;
+    delete state.ratings[currentEditDate];
+    if (state.notes) delete state.notes[currentEditDate];
+    saveLocal();
+    renderTracker();
+    closeEntryModal();
+}
+
 /* ====================================================================== */
 /*  SVG geometry                                                           */
 /* ====================================================================== */
