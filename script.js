@@ -599,13 +599,7 @@ async function init() {
     state.startYear = new Date().getFullYear();
     log('initial state', { startYear: state.startYear, ratings: 0 });
 
-    /* --- Render the tracker IMMEDIATELY. Empty cells are drawn first
-     *     so the user always sees the wheel, no matter what else may
-     *     fail during data loading below.                             */
     try { bindEvents();       } catch (e) { logError('bindEvents', e); }
-    try { renderTracker();    } catch (e) { logError('First render failed:', e); }
-    try { resizeTracker();    } catch (e) { logError('resizeTracker', e); }
-    requestAnimationFrame(() => { try { resizeTracker(); } catch (_) {} });
 
     /* --- Load data in the background, catching everything --- */
     try {
@@ -617,8 +611,10 @@ async function init() {
 
     log('after load     |  ratings=', Object.keys(state.ratings).length);
 
-    /* --- Re-render with whatever we managed to load --- */
-    try { renderTracker();       } catch (e) { logError('Second render failed:', e); }
+    /* --- Render the tracker with loaded data --- */
+    try { renderTracker();    } catch (e) { logError('renderTracker failed:', e); }
+    try { resizeTracker();    } catch (e) { logError('resizeTracker', e); }
+    requestAnimationFrame(() => { try { resizeTracker(); } catch (_) {} });
 
     log('init() done');
 }
