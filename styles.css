@@ -104,6 +104,53 @@ body {
 .floating-controls button:hover { background: var(--control-hover); color: var(--text); }
 .floating-controls button.danger:hover { background: var(--danger-hover); color: var(--danger-hover-fg); }
 
+/* ---------- Modal ---------- */
+.modal {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.5);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 1000;
+}
+.modal.hidden { display: none; }
+.modal-content {
+    background: var(--bg);
+    color: var(--text);
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    width: 90%; max-width: 400px;
+    display: flex; flex-direction: column; gap: 16px;
+    font-family: inherit;
+}
+.modal-content h3 { margin: 0; text-align: center; }
+.input-group { display: flex; flex-direction: column; gap: 4px; }
+.input-group input, .input-group textarea {
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--text-muted);
+    padding: 8px;
+    border-radius: 4px;
+    font-family: inherit;
+}
+.input-group input:focus, .input-group textarea:focus {
+    outline: none;
+    border-color: var(--text);
+}
+.modal-actions { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; }
+.modal-actions button {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--text-muted);
+    color: var(--text);
+    font-family: inherit;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+.modal-actions button:hover { background: var(--control-hover); }
+.modal-actions button.danger { color: var(--status-err); border-color: var(--status-err); }
+.modal-actions button.danger:hover { background: var(--danger-hover); }
+
 .status {
     position: fixed;
     left: 16px;

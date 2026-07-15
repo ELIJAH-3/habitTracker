@@ -48,11 +48,13 @@ function logEnd()       { console.groupEnd(); }
 /* ---------- State ---------- */
 let state = {
     startYear: new Date().getFullYear(),
-    ratings: {}                             // { "YYYY-MM-DD": 1..10 }
+    ratings: {},                            // { "YYYY-MM-DD": 1..10 }
+    notes: {}                               // { "YYYY-MM-DD": "Note text" }
 };
 
 let syncTimeout = null;
 let statusTimer = null;
+let currentEditDate = null;
 
 /* ====================================================================== */
 /*  Color gradient                                                         */
@@ -90,12 +92,18 @@ function deserialize(text) {
     if (!obj || typeof obj !== 'object') throw new Error('Invalid file');
     const clean = {
         startYear: typeof obj.startYear === 'number' ? obj.startYear : new Date().getFullYear(),
-        ratings:   {}
+        ratings:   {},
+        notes:     {}
     };
     if (obj.ratings && typeof obj.ratings === 'object') {
         for (const [k, v] of Object.entries(obj.ratings)) {
             const n = Number(v);
             if (Number.isInteger(n) && n >= 1 && n <= 10) clean.ratings[k] = n;
+        }
+    }
+    if (obj.notes && typeof obj.notes === 'object') {
+        for (const [k, v] of Object.entries(obj.notes)) {
+            if (typeof v === 'string' && v.trim() !== '') clean.notes[k] = v;
         }
     }
     return clean;
@@ -229,19 +237,10 @@ function setRating(ringIdx, day, value) {
 
 /* Ask the user for a rating for the clicked cell. */
 function promptRating(ringIdx, day) {
-    const cur = getRating(ringIdx, day);
-    const raw = window.prompt(
-        `Rate ${cellKey(ringIdx, day)} on a scale of 1 to 10.\n` +
-        `(Enter 0 or leave blank to clear this day.)`,
-        cur ? String(cur) : ''
-    );
-    if (raw === null) return;                          // cancelled
-    const trimmed = raw.trim();
-    /* Blank or "0" clears the cell. */
-    if (trimmed === '' || trimmed === '0') { setRating(ringIdx, day, 0); return; }
-    const n = parseInt(trimmed, 10);
-    if (Number.isInteger(n) && n >= 1 && n <= 10) setRating(ringIdx, day, n);
-    else showStatus('Please enter a whole number from 1 to 10.', true);
+    const key = cellKey(ringIdx, day);
+    const curRating = state.ratings[key] || '';
+    const curNote = state.notes && state.notes[key] ? state.notes[key] : '';
+    openEntryModal(key, curRating, curNote);
 }
 
 /* ====================================================================== */
@@ -350,10 +349,27 @@ function renderTracker() {
             });
 
             const title = document.createElementNS(SVG_NS, 'title');
-            title.textContent = `${cellKey(m, d)}${rating ? '  -  ' + rating + '/10' : ''}`;
+            const noteText = state.notes && state.notes[cellKey(m, d)] ? `\nNote: ${state.notes[cellKey(m, d)]}` : '';
+            title.textContent = `${cellKey(m, d)}${rating ? '  -  ' + rating + '/10' : ''}${noteText}`;
             path.appendChild(title);
 
             svg.appendChild(path);
+
+            /* Note indicator dot */
+            if (state.notes && state.notes[cellKey(m, d)] && state.notes[cellKey(m, d)].trim() !== '') {
+                const aMid = aStartI + (aEndI - aStartI) / 2;
+                const pMid = polar(rMid, aMid);
+                const dot = document.createElementNS(SVG_NS, 'circle');
+                dot.setAttribute('cx', pMid.x);
+                dot.setAttribute('cy', pMid.y);
+                dot.setAttribute('r', 3);
+                dot.setAttribute('class', 'note-dot');
+                dot.setAttribute('fill', 'var(--text)');
+                dot.setAttribute('opacity', '0.6');
+                dot.style.pointerEvents = 'none';
+                svg.appendChild(dot);
+            }
+
             } catch (cellErr) {
                 console.warn('Skipping bad cell', m, d, cellErr);
             }
@@ -511,12 +527,18 @@ function bindEvents() {
     document.getElementById('pdfBtn').addEventListener('click', exportPdf);
     document.getElementById('printBtn').addEventListener('click', () => window.print());
     document.getElementById('resetBtn').addEventListener('click', () => {
-        if (!confirm('Clear ALL ratings?')) return;
+        if (!confirm('Clear ALL ratings and notes?')) return;
         state.ratings = {};
+        state.notes = {};
         saveLocal();
         renderTracker();
         showStatus('Cleared.');
     });
+
+    document.getElementById('modalSaveBtn').addEventListener('click', saveEntry);
+    document.getElementById('modalClearBtn').addEventListener('click', clearEntry);
+    document.getElementById('modalCancelBtn').addEventListener('click', closeEntryModal);
+
     window.addEventListener('resize',           resizeTracker);
     window.addEventListener('load',             resizeTracker);
     document.addEventListener('fullscreenchange', () => {

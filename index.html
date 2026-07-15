@@ -24,6 +24,25 @@
     </div>
     <div id="statusMsg" class="status no-print"></div>
 
+    <div id="entryModal" class="modal hidden no-print">
+        <div class="modal-content">
+            <h3 id="modalDate"></h3>
+            <div class="input-group">
+                <label for="modalRating">Rating (1-10)</label>
+                <input type="number" id="modalRating" min="1" max="10" step="1">
+            </div>
+            <div class="input-group">
+                <label for="modalNote">Note (optional)</label>
+                <textarea id="modalNote" rows="4" placeholder="How was your day?"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button id="modalSaveBtn">Save</button>
+                <button id="modalClearBtn" class="danger">Clear</button>
+                <button id="modalCancelBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <script src="vendor/html2canvas.min.js"></script>
     <script src="vendor/jspdf.umd.min.js"></script>
     <script src="script.js"></script>
