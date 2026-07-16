@@ -403,13 +403,26 @@ function renderTracker() {
                 path.setAttribute('class', 'seg empty');
             }
 
+            const key = cellKey(m, d);
+            path.setAttribute('id', 'cell-' + key);
+
             path.addEventListener('click', ev => {
                 ev.preventDefault();
-                promptRating(m, d);
+                if (isToday(m, d)) {
+                    promptRating(m, d);
+                } else {
+                    showStatus("Only today's entry can be edited.", true);
+                    highlightCell(key);
+                }
             });
             path.addEventListener('contextmenu', ev => {
                 ev.preventDefault();
-                setRating(m, d, 0);
+                if (isToday(m, d)) {
+                    setRating(m, d, 0);
+                } else {
+                    showStatus("Only today's entry can be edited.", true);
+                    highlightCell(key);
+                }
             });
 
             const title = document.createElementNS(SVG_NS, 'title');
@@ -504,6 +517,23 @@ function renderTracker() {
     renderNotesSidebar();
 }
 
+function getTodayKey() {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+}
+
+function highlightCell(key) {
+    document.querySelectorAll('.highlight-pulse').forEach(el => el.classList.remove('highlight-pulse'));
+    const cell = document.getElementById('cell-' + key);
+    if (cell) {
+        cell.parentNode.appendChild(cell); // Bring to front
+        cell.classList.add('highlight-pulse');
+        setTimeout(() => {
+            if (cell) cell.classList.remove('highlight-pulse');
+        }, 2100);
+    }
+}
+
 function renderNotesSidebar() {
     const list = document.getElementById('notesList');
     if (!list) return;
@@ -551,10 +581,15 @@ function renderNotesSidebar() {
         card.appendChild(header);
         card.appendChild(body);
         
-        // Click to edit
+        // Click to highlight (and edit if it's today)
         card.style.cursor = 'pointer';
         card.addEventListener('click', () => {
-            openEntryModal(dateStr, rating || '', noteText);
+            highlightCell(dateStr);
+            if (dateStr === getTodayKey() && state.startYear === new Date().getFullYear()) {
+                openEntryModal(dateStr, rating || '', noteText);
+            } else {
+                showStatus("Only today's entry can be edited.", true);
+            }
         });
 
         list.appendChild(card);
@@ -649,14 +684,6 @@ function bindEvents() {
     });
     document.getElementById('pdfBtn').addEventListener('click', exportPdf);
     document.getElementById('printBtn').addEventListener('click', () => window.print());
-    document.getElementById('resetBtn').addEventListener('click', () => {
-        if (!confirm('Clear ALL ratings and notes?')) return;
-        state.ratings = {};
-        state.notes = {};
-        saveLocal();
-        renderTracker();
-        showStatus('Cleared.');
-    });
 
     document.getElementById('modalSaveBtn').addEventListener('click', saveEntry);
     document.getElementById('modalClearBtn').addEventListener('click', clearEntry);

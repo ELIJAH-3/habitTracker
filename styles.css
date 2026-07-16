@@ -255,6 +255,14 @@ body.menu-hidden .floating-controls,
 body.menu-hidden .status,
 body.menu-hidden .hamburger-btn { display: none !important; }
 
+@keyframes flash-cell {
+    0%, 100% { stroke-width: 8px; }
+    50% { stroke: var(--text); stroke-width: 14px; filter: drop-shadow(0 0 8px var(--text)); }
+}
+.highlight-pulse {
+    animation: flash-cell 0.7s ease-in-out 3 !important;
+}
+
 /* ---------- SVG cell shapes ---------- */
 .seg {
     cursor: pointer;
