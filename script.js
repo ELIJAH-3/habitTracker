@@ -411,7 +411,6 @@ function renderTracker() {
                 if (isToday(m, d)) {
                     promptRating(m, d);
                 } else {
-                    showStatus("Only today's entry can be edited.", true);
                     highlightCell(key);
                 }
             });
@@ -420,7 +419,6 @@ function renderTracker() {
                 if (isToday(m, d)) {
                     setRating(m, d, 0);
                 } else {
-                    showStatus("Only today's entry can be edited.", true);
                     highlightCell(key);
                 }
             });
@@ -587,8 +585,6 @@ function renderNotesSidebar() {
             highlightCell(dateStr);
             if (dateStr === getTodayKey() && state.startYear === new Date().getFullYear()) {
                 openEntryModal(dateStr, rating || '', noteText);
-            } else {
-                showStatus("Only today's entry can be edited.", true);
             }
         });
 
