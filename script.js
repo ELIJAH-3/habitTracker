@@ -562,7 +562,7 @@ function renderNotesSidebar() {
         header.className = 'note-card-header';
         
         const d = new Date(dateStr + "T12:00:00");
-        const options = { month: 'short', day: 'numeric', year: 'numeric' };
+        const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
         const dateSpan = document.createElement('span');
         dateSpan.textContent = d.toLocaleDateString(undefined, options);
         
