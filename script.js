@@ -385,6 +385,15 @@ function renderTracker() {
                 svg.appendChild(marker);
             }
 
+            /* Perfect score marker: drawn UNDER the cell so only the outer band shows */
+            if (rating === 10) {
+                const marker = document.createElementNS(SVG_NS, 'path');
+                marker.setAttribute('d', pathD);
+                marker.setAttribute('class', 'perfect-marker');
+                marker.setAttribute('stroke-width', String(CORNER * 2 + 8));
+                svg.appendChild(marker);
+            }
+
             const path = document.createElementNS(SVG_NS, 'path');
             path.setAttribute('d', pathD);
             path.setAttribute('stroke-width', String(CORNER * 2));
