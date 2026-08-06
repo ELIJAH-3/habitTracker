@@ -299,7 +299,8 @@ body.menu-hidden .hamburger-btn { display: none !important; }
     stroke-linejoin: round;
     stroke-linecap: round;
     pointer-events: none;
-    animation: today-pulse 5s ease-in-out infinite;
+    animation: today-pulse 10s ease-in-out infinite;
+
 }
 
 @keyframes today-pulse {
