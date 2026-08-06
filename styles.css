@@ -13,6 +13,7 @@
     --danger-hover:    rgba(198,40,40,0.14);
     --danger-hover-fg: #a01818;
     --today:           #3a4759;                  /* muted royal graphite */
+    --perfect-border:  #063814;                  /* very dark green */
 }
 
 [data-theme="dark"] {
@@ -29,6 +30,7 @@
     --danger-hover:    rgba(255,107,107,0.16);
     --danger-hover-fg: #ff8080;
     --today:           #b6b8c0;                  /* soft platinum */
+    --perfect-border:  #99ffb3;                  /* bright green */
 }
 
 /* ---------- Base ---------- */
@@ -278,7 +280,6 @@ body.menu-hidden .hamburger-btn { display: none !important; }
 /* Rated cells set their own fill+stroke via inline `style` in JS so
  * the rounded-corner stroke is guaranteed to match the fill colour.  */
 .seg.rated { filter: none; }
-.seg.perfect { filter: drop-shadow(0 0 5px var(--status-ok)); }
 .seg:hover { filter: brightness(0.9) drop-shadow(0 0 1.5px var(--hover-shadow)); }
 
 /* Today highlight: an outlined ring rendered UNDER today's cell, so only
