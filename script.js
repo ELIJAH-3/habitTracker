@@ -398,8 +398,7 @@ function renderTracker() {
                  * makes the cell look like a filled centre with a
                  * differently-coloured outline.                          */
                 path.setAttribute('class', 'seg rated');
-                const strokeColor = rating === 10 ? 'var(--perfect-border)' : color;
-                path.setAttribute('style', `fill:${color};stroke:${strokeColor}`);
+                path.setAttribute('style', `fill:${color};stroke:${color}`);
             } else {
                 path.setAttribute('class', 'seg empty');
             }

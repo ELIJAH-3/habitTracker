@@ -13,7 +13,6 @@
     --danger-hover:    rgba(198,40,40,0.14);
     --danger-hover-fg: #a01818;
     --today:           #3a4759;                  /* muted royal graphite */
-    --perfect-border:  #063814;                  /* very dark green */
 }
 
 [data-theme="dark"] {
@@ -30,7 +29,6 @@
     --danger-hover:    rgba(255,107,107,0.16);
     --danger-hover-fg: #ff8080;
     --today:           #b6b8c0;                  /* soft platinum */
-    --perfect-border:  #99ffb3;                  /* bright green */
 }
 
 /* ---------- Base ---------- */
